@@ -79,7 +79,7 @@ global.db.data.chats[m.chat] = {}
 if (chat) {
 if (!("isBanned" in chat)) chat.isBanned = false
 if (!("isMute" in chat)) chat.isMute = false;
-if (!("welcome" in chat)) chat.welcome = false
+if (!("welcome" in chat)) chat.welcome = true
 if (!("sWelcome" in chat)) chat.sWelcome = ""
 if (!("sBye" in chat)) chat.sBye = ""
 if (!("detect" in chat)) chat.detect = true
@@ -92,7 +92,7 @@ if (!("gacha" in chat)) chat.gacha = true
 } else global.db.data.chats[m.chat] = {
 isBanned: false,
 isMute: false,
-welcome: false,
+welcome: true,
 sWelcome: "",
 sBye: "",
 detect: true,
@@ -381,7 +381,7 @@ global.dfail = (type, m, conn) => {
 
    restrict: `*_ ׄ ☁️ ׅ  Esta caracteristica está desactivada._*`
  }[type]
-if (msg) return conn.reply(m.chat, msg, m, rcanal).then(_ => m.react('✖️'))
+if (msg) return conn.reply(m.chat, msg, m, rcanalx).then(_ => m.react('✖️'))
 }
 let file = global.__filename(import.meta.url, true)
 watchFile(file, async () => {

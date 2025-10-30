@@ -8,11 +8,12 @@ let handler = async (m, { conn, text, command, usedPrefix }) => {
       return conn.reply(
         m.chat,
         `🎋 Ingresa el nombre de la canción o un enlace de YouTube.\n\n> Ejemplo: ${usedPrefix + command} DJ Malam Pagi`,
-        m
+        m, fake
       )
     }
 
     await conn.sendMessage(m.chat, { react: { text: "⏳", key: m.key } })
+    await conn.reply(m.chat, '*_🚀 Buscando en Youtube_*', m)
 
     const search = await yts(text)
     const video = search.videos[0]
@@ -30,75 +31,68 @@ let handler = async (m, { conn, text, command, usedPrefix }) => {
 
     const apis = [
       {
-        api: 'ZenzzXD v2',
-        endpoint: `https://api.zenzxz.my.id/api/downloader/ytmp3v2?url=${encodeURIComponent(video.url)}`,
-        extractor: res => res.data?.download_url
-      },
-      {
         api: 'Vreden',
-        endpoint: `https://api.vreden.my.id/api/v1/download/youtube/audio?url=${encodeURIComponent(video.url)}&quality=128`,
+        endpoint: `https://api.vreden.my.id/api/v1/download/youtube/audio?url=${encodeURIComponent(meta.url)}&quality=128`,
         extractor: res => res.result?.download?.url
       },
       {
-        api: 'Yupra',
-        endpoint: `https://api.yupra.my.id/api/downloader/ytmp3?url=${encodeURIComponent(video.url)}`,
-        extractor: res => res.result?.link
-      },
-      {
-        api: 'Stellar',
-        endpoint: `https://api.stellarwa.xyz/dow/ytmp3?url=${encodeURIComponent(video.url)}&apikey=Shadow_Core`,
-        extractor: res => res.data?.dl
+        api: 'ZenzzXD v2',
+        endpoint: `https://api.zenzxz.my.id/api/downloader/ytmp3v2?url=${encodeURIComponent(meta.url)}`,
+        extractor: res => res.data?.download_url
       }
     ]
 
     const { url: downloadUrl, servidor } = await fetchFromApis(apis)
-    if (!downloadUrl) return conn.reply(m.chat, '❌ Ninguna API devolvió el audio.', m)
+    if (!downloadUrl) return conn.reply(m.chat, 'Ninguna API devolvió el audio.', m)
 
     const size = await getSize(downloadUrl)
     const sizeStr = size ? formatSize(size) : 'Desconocido'
 
-    const textoInfo = `╔═══❖•ೋ° ⚜️ °ೋ•❖═══╗
-       *🎧 ＹＯＵＴＵＢＥ ＭＰ3 🎶*
-╚═══❖•ೋ° ⚜️ °ೋ•❖═══╝
-🌸 *Título:* ${meta.title}
-🕒 *Duración:* ${meta.duration}
-💾 *Tamaño:* ${sizeStr}
-🎚 *Calidad:* 128kbps
-📡 *Canal:* ${meta.author}
-👁 *Vistas:* ${meta.views}
-📅 *Publicado:* ${meta.ago}
-🔗 *Enlace:* ${meta.url}
+    const textoInfo = `🍃 *Título:* 
+> ${meta.title}
+🕒 *Duración:* 
+> ${meta.duration}
+💾 *Tamaño:* 
+> ${sizeStr}
+🎚 *Calidad:* 
+> 128kbps
+📡 *Canal:* 
+> ${meta.author}
+👁 *Vistas:*
+> ${meta.views}
+📅 *Publicado:* 
+> ${meta.ago}
+🔗 *Enlace:*
+> ${meta.url}
+🛠 *Servidor usado:* 
+> ${servidor}
 ────────────────────
-🍀 *Procesando tu canción, espera un momento...*`
+🍬 *Procesando tu canción...*`
 
     const thumb = (await conn.getFile(meta.thumbnail)).data
+    await conn.sendMessage(m.chat, { image: thumb, caption: textoInfo, ...fake }, { quoted: m })
 
-    await conn.sendMessage(m.chat, { image: thumb, caption: textoInfo }, { quoted: m })
+    const audioResponse = await axios.get(downloadUrl, { responseType: 'arraybuffer' })
+    const audioBuffer = Buffer.from(audioResponse.data)
 
-    await conn.sendMessage(m.chat, { audio: { url: downloadUrl }, fileName: `${meta.title}.mp3`, mimetype: 'audio/mpeg' }, { quoted: m })
-    
- /*       const audioBuffer = await (await fetch(downloadUrl)).buffer()
     await conn.sendMessage(m.chat, {
       audio: audioBuffer,
       fileName: `${meta.title}.mp3`,
       mimetype: "audio/mpeg",
-      ptt: false,
+      ptt: false, // true pa nota de voz xD
       contextInfo: {
         externalAdReply: {
           showAdAttribution: true,
-          title: '☃️ 𝐘  𝐎 𝐔 𝐓 𝐔 𝐁 𝐄 • 𝐌 𝐔 𝐒 𝐈 𝐂',
-          body: `ᴅᴜʀᴀᴄɪᴏɴ: ${meta.duration} | ᴘᴇsᴏ: ${meta.size}`,
+          title: '☃️ 𝐘  𝐎 𝐔 𝐓 𝐔 𝐁 𝐄 • 𝐌 𝐔 𝐒 𝐈 𝐂 🚀',
+          body: `Duración: ${meta.duration} | Tamaño: ${sizeStr} | Servidor: ${servidor}`,
           thumbnailUrl: meta.thumbnail,
           mediaType: 2,
           renderLargerThumbnail: true,
           mediaUrl: meta.url,
-          sourceUrl: meta.url,
-          who = mentionedJid[0] ? mentionedJid[0] : m.quoted ? await m.quoted.sender : m.sender
+          sourceUrl: meta.url
         }
       }
-    }, { quoted: fkontak })*/
-    
-    await m.reply(`> 🌸 *Audio procesado correctamente.*\n> Servidor usado: *${servidor}*\n> Peso: *${sizeStr}*`)
+    }, { quoted: m })
 
     await conn.sendMessage(m.chat, { react: { text: "✔️", key: m.key } })
 
@@ -115,14 +109,14 @@ handler.group = true
 
 export default handler
 
+
 async function fetchFromApis(apis) {
   for (const api of apis) {
     try {
-      const res = await fetch(api.endpoint)
-      const json = await res.json()
-      const url = api.extractor(json)
+      const res = await axios.get(api.endpoint, { timeout: 10000 })
+      const url = api.extractor(res.data)
       if (url) return { url, servidor: api.api }
-    } catch {}
+    } catch (e) { continue }
   }
   return { url: null, servidor: "Ninguno" }
 }

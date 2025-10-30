@@ -36,7 +36,7 @@ const groupAdmins = participants.filter(p => p.admin)
             mimetype: "image/jpeg",
             jpegThumbnail: thumbnail
           },
-          title: "（つ  / ♡. ㅤ•*゜・。... 🄺🄰🄽🄴🄺🄸 🄱🄾🅃 🄼🄳🍃⃤꙰ 🌀꒱* ",
+          title: "𐔌 . ⋮ ᗩ ᐯ I Տ O .ᐟ ֹ ₊ ꒱",
           description: dev,
           currencyCode: "USD",
           priceAmount1000: 5000,
@@ -49,7 +49,7 @@ const groupAdmins = participants.filter(p => p.admin)
   }
   
   
-const rcanal = { contextInfo: { isForwarded: true, forwardedNewsletterMessageInfo: { newsletterJid: channelRD.id, serverMessageId: '', newsletterName: channelRD.name }, externalAdReply: { title: "𐔌 . ⋮ ᗩ ᐯ I Տ O .ᐟ ֹ ₊ ꒱", body: textbot, mediaUrl: null, description: null, previewType: "PHOTO", thumbnail: await (await fetch(icono)).buffer(), sourceUrl: redes, mediaType: 1, renderLargerThumbnail: false }, mentionedJid: null }}
+const rcanal = { contextInfo: { isForwarded: true, forwardedNewsletterMessageInfo: { newsletterJid: channelRD.id, serverMessageId: '（つ  / ♡. ㅤ•*゜・。... 🄺🄰🄽🄴🄺🄸 🄱🄾🅃 🄼🄳🍃⃤꙰ 🌀꒱* ', newsletterName: channelRD.name }, externalAdReply: { title: "", body: textbot, mediaUrl: null, description: null, previewType: "PHOTO", thumbnail: await (await fetch(icono)).buffer(), sourceUrl: redes, mediaType: 1, renderLargerThumbnail: false }, mentionedJid: null }}
 const pp = await conn.profilePictureUrl(m.chat, 'image').catch(_ => null) || 'https://files.catbox.moe/xr2m6u.jpg'
 const nombre = `> ❀ @${usuario.split('@')[0]} Ha cambiado el nombre del grupo.\n> ✦ Ahora el grupo se llama:\n> *${m.messageStubParameters[0]}*.`
 
@@ -72,26 +72,26 @@ await fs.promises.unlink(path.join(sessionPath, file))
 console.log(`${chalk.yellow.bold('✎ Delete!')} ${chalk.greenBright(`'${file}'`)}\n${chalk.redBright('Que provoca el "undefined" en el chat.')}`)
 }}} if (chat.detect && m.messageStubType == 21) {
 rcanal.contextInfo.mentionedJid = [usuario, ...groupAdmins.map(v => v.id)]
-await this.sendMessage(m.chat, { text: nombre, ...rcanal }, { quoted: null })
+await this.sendMessage(m.chat, { text: nombre, ...rcanal }, { quoted: shadow_xyz })
 } if (chat.detect && m.messageStubType == 22) {
 rcanal.contextInfo.mentionedJid = [usuario, ...groupAdmins.map(v => v.id)]
-await this.sendMessage(m.chat, { image: { url: pp }, caption: foto, ...rcanal }, { quoted: null })
+await this.sendMessage(m.chat, { image: { url: pp }, caption: foto, ...rcanal }, { quoted: shadow_xyzl })
 } if (chat.detect && m.messageStubType == 23) {
 rcanal.contextInfo.mentionedJid = [usuario, ...groupAdmins.map(v => v.id)]
-await this.sendMessage(m.chat, { text: newlink, ...rcanal }, { quoted: null })
+await this.sendMessage(m.chat, { text: newlink, ...rcanal }, { quoted: shadow_xyz })
 } if (chat.detect && m.messageStubType == 25) {
 rcanal.contextInfo.mentionedJid = [usuario, ...groupAdmins.map(v => v.id)]
-await this.sendMessage(m.chat, { text: edit, ...rcanal }, { quoted: null })
+await this.sendMessage(m.chat, { text: edit, ...rcanal }, { quoted: shadow_xyz })
 } if (chat.detect && m.messageStubType == 26) {
 rcanal.contextInfo.mentionedJid = [usuario, ...groupAdmins.map(v => v.id)]
-await this.sendMessage(m.chat, { text: status, ...rcanal }, { quoted: null })
+await this.sendMessage(m.chat, { text: status, ...rcanal }, { quoted: shadow_xyz })
 } if (chat.detect && m.messageStubType == 29) {
 rcanal.contextInfo.mentionedJid = [usuario, users, ...groupAdmins.map(v => v.id)].filter(Boolean)
-await this.sendMessage(m.chat, { text: admingp, ...rcanal }, { quoted: null })
+await this.sendMessage(m.chat, { text: admingp, ...rcanal }, { quoted: shadow_xyz })
 return
 } if (chat.detect && m.messageStubType == 30) {
 rcanal.contextInfo.mentionedJid = [usuario, users, ...groupAdmins.map(v => v.id)].filter(Boolean)
-await this.sendMessage(m.chat, { text: noadmingp, ...rcanal }, { quoted: null })
+await this.sendMessage(m.chat, { text: noadmingp, ...rcanal }, { quoted: shadow_xyz })
 } else { 
 if (m.messageStubType == 2) return
 console.log({messageStubType: m.messageStubType,

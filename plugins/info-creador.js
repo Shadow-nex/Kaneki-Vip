@@ -1,17 +1,18 @@
+
 // by dv.shadow - https://github.com/Yuji-XDev
 
 import { proto } from '@whiskeysockets/baileys';
 import PhoneNumber from 'awesome-phonenumber';
 
 const handler = async (m, { conn }) => {
-  const name = 'sһᥲძ᥆ᥕ-᥊ᥡz | ᥆𝖿𝖿іᥴіᥲᥣ';
-  const numCreador = '51919199620';
-  const empresa = 'ᴋᴀɴᴇᴋɪ ʙᴏᴛ ɪɴɪᴄ.';
-  const about = '💖 𝑫𝒆𝒔𝒂𝒓𝒓𝒐𝒍𝒍𝒂𝒅𝒐𝒓 𝒐𝒇𝒇𝒊𝒄𝒊𝒂𝒍 𝒅𝒆 𝑲𝒂𝒏𝒆𝒌𝒊-𝑩𝒐𝒕 𝑽3';
-  const correo = 'blackoficial2025@gmail.com';
-  const web = 'https://shadow-xyz.vercel.app/';
-  const direccion = 'Tokyo, Japón 🇯🇵';
-  const fotoPerfil = 'https://qu.ax/tAWKZ.jpg';
+  const name = 'sһᥲძ᥆ᥕ-᥊ᥡz | ᥆𝖿𝖿іᥴіᥲᥩ'
+  const numCreador = '51919199620'
+  const empresa = 'ᴋᴀɴᴇᴋɪ ʙᴏᴛ ɪɴɪᴄ.'
+  const about = '🍃 𝑫𝒆𝒔𝒂𝒓𝒓𝒐𝒍𝒍𝒂𝒅𝒐𝒓 𝒐𝒇𝒇𝒊𝒄𝒊𝒂𝒍 𝒅𝒆 𝑲𝒂𝒏𝒆𝒌𝒊-𝑩𝒐𝒕 𝑽3'
+  const correo = 'shadowcore.xyz@gmail.com'
+  const web = 'https://shadow-xyz.vercel.app/'
+  const direccion = 'Tokyo, Japón 🇯🇵'
+  const fotoPerfil = 'https://qu.ax/tAWKZ.jpg'
 
   const vcard = `
 BEGIN:VCARD
@@ -34,7 +35,7 @@ END:VCARD`.trim();
     displayName: name,
     vcard
   };
-  m.react('☁️');
+  m.react('🌿');
   await conn.sendMessage(m.chat, {
     contacts: {
       displayName: name,
@@ -43,7 +44,7 @@ END:VCARD`.trim();
     contextInfo: {
     mentionedJid: [m.sender],
       externalAdReply: {
-        title: '🕸️ ƈσɳƚαƈƚσ ԃҽ ɱι ƈɾҽαԃσɾ • σиιι¢нαи 🌿',
+        title: '🍃 ᴄᴏɴᴛᴀᴄᴛᴏ ᴅᴇ ᴍɪ ᴄʀᴇᴀᴅᴏʀ ᴜᴡᴜ 🍉',
         body: '',
         mediaType: 1,
         thumbnailUrl: fotoPerfil,
