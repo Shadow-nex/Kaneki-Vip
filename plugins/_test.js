@@ -64,11 +64,13 @@ let handler = async (m, { conn, text }) => {
   } catch (e) {
     console.error("[Error en .mini]", e)
     await m.react(error)
-    await m.reply("❌ *Ocurrió un error al procesar la imagen.*\nVerifica que el enlace o archivo sea válido.")
+    await m.reply("*Ocurrió un error al procesar la imagen.*\nVerifica que el enlace o archivo sea válido.")
   }
 }
 
 handler.command = ["mini", "miniatura"]
+handler.register = true;
+
 export default handler
 
 

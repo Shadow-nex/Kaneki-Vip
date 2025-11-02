@@ -44,11 +44,21 @@ if (!("marry" in user)) user.marry = ""
 if (!("description" in user)) user.description = ""
 if (!("packstickers" in user)) user.packstickers = null
 if (!("premium" in user)) user.premium = false
+
+if (!('registered' in user)) user.registered = false
+
 if (!("premiumTime" in user)) user.premiumTime = 0
 if (!("banned" in user)) user.banned = false
 if (!("bannedReason" in user)) user.bannedReason = ""
 if (!("commands" in user) || !isNumber(user.commands)) user.commands = 0
 if (!("afk" in user) || !isNumber(user.afk)) user.afk = -1
+
+
+if (!user.registered) {
+  if (!('name' in user)) user.name = m.name
+  if (!isNumber(user.age)) user.age = -1
+  if (!isNumber(user.regTime)) user.regTime = -1
+}
 if (!("afkReason" in user)) user.afkReason = ""
 if (!("warn" in user) || !isNumber(user.warn)) user.warn = 0
 } else global.db.data.users[m.sender] = {
@@ -69,6 +79,7 @@ banned: false,
 bannedReason: "",
 commands: 0,
 afk: -1,
+registered: false,
 afkReason: "",
 warn: 0
 }
@@ -302,6 +313,10 @@ if (plugin.private && m.isGroup) {
 fail("private", m, this)
 continue
 }
+if (plugin.register == true && _user.registered == false) { 
+fail('unreg', m, this)
+continue
+}
 m.isCommand = true
 m.exp += plugin.exp ? parseInt(plugin.exp) : 10
 let extra = {
@@ -378,6 +393,8 @@ global.dfail = (type, m, conn) => {
    admin: ` ׄ 🎋 ׅ  𝙀𝙡 𝙘𝙤𝙢𝙖𝙣𝙙𝙤 *${comando}* 𝙨𝙤𝙡𝙤 𝙥𝙪𝙚𝙙𝙚 𝙨𝙚𝙧 𝙪𝙨𝙖𝙙𝙤 𝙥𝙤𝙧 𝙡𝙤𝙨 𝙖𝙙𝙢𝙞𝙣𝙨 𝙙𝙚𝙡 𝙜𝙧𝙪𝙥𝙤.`,
 
    botAdmin: ` ׄ 🚀 ׅ  𝙋𝙖𝙧𝙖 𝙚𝙟𝙚𝙘𝙪𝙩𝙖𝙧 𝙚𝙡 𝙘𝙤𝙢𝙖𝙣𝙙𝙤 *${comando}* 𝙙𝙚𝙗𝙤 𝙨𝙚𝙧 𝙖𝙙𝙢𝙞𝙣𝙞𝙨𝙩𝙧𝙖𝙙𝙤𝙧 𝙙𝙚𝙡 𝙜𝙧𝙪𝙥𝙤.`,
+   
+   unreg: ' ׄ 🎋 ׅ  𝙽𝙾 𝚃𝙴 𝙴𝙽𝙲𝚄𝙴𝙽𝚃𝚁𝙰𝚂 𝚁𝙴𝙶𝙸𝚂𝚃𝚁𝙰𝙳𝙾(𝙰)\n𝚁𝙴𝙶𝙸𝚂𝚃𝚁𝙰𝚃𝙴 𝙿𝙰𝚁𝙰 𝚄𝚂𝙰𝚁 𝙴𝚂𝚃𝙰 𝙵𝚄𝙽𝙲𝙸𝙾𝙽.\n\nᴜᴛɪʟɪᴢᴀ: #ʀᴇɢ <ɴᴏᴍʙʀᴇ.ᴇᴅᴀᴅ>\n\n`𝙴𝙹𝙴𝙼𝙿𝙻𝙾:`\n> #reg xD.19', 
 
    restrict: `*_ ׄ ☁️ ׅ  Esta caracteristica está desactivada._*`
  }[type]
