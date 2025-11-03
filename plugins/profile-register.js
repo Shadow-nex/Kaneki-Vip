@@ -1,16 +1,24 @@
 import db from '../lib/database.js'
 import fs from 'fs'
-import PhoneNumber from 'awesome-phonenumber'
-import { createHash } from 'crypto'  
 import fetch from 'node-fetch'
+import PhoneNumber from 'awesome-phonenumber'
+import { createHash } from 'crypto'
+import baileys, { WAMessageStubType } from '@whiskeysockets/baileys'
 
+const { proto } = baileys
 let Reg = /\|?(.*)([.|] *?)([0-9]*)$/i
 
 let handler = async function (m, { conn, text, usedPrefix, command }) {
-  let who = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.fromMe ? conn.user.jid : m.sender
-  let pp = await conn.profilePictureUrl(who, 'image').catch((_) => 'https://i.pinimg.com/originals/f3/a1/25/f3a1255debb3a1dfbcf5d132d8c54722.jpg')
-  let user = global.db.data.users[m.sender]
-  let name2 = conn.getName(m.sender)
+  const botname = 'KanekiBot-V3'
+  const who = m.mentionedJid && m.mentionedJid[0]
+    ? m.mentionedJid[0]
+    : m.fromMe
+    ? conn.user.jid
+    : m.sender
+
+  const user = global.db.data.users[m.sender]
+  const name2 = await conn.getName(m.sender)
+  const pp = await conn.profilePictureUrl(who, 'image').catch(() => 'https://i.postimg.cc/Z5VtjKrz/kaneki-ai.jpg')
 
   let bio
   try {
@@ -20,52 +28,85 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
     bio = "Sin descripción personal..."
   }
 
+  // Mini contacto para citar
+  const thumbBuffer = await fetch('https://i.postimg.cc/rFfVL8Ps/image.jpg')
+    .then(v => v.arrayBuffer())
+    .then(v => Buffer.from(v))
+    .catch(() => null)
+
+  const fkontak = {
+    key: { participant: '0@s.whatsapp.net', remoteJid: 'status@broadcast', fromMe: false, id: 'Halo' },
+    message: { locationMessage: { name: '🍷 KanekiBot-V3 ┊ Registro', jpegThumbnail: thumbBuffer } },
+    participant: '0@s.whatsapp.net'
+  }
+
+  // 🧩 Si ya está registrado
   if (user.registered) {
-    const botones = [
-      { buttonId: `${usedPrefix}unreg`, buttonText: { displayText: '💀 𝐄𝐋𝐈𝐌𝐈𝐍𝐀𝐑 𝐑𝐄𝐆𝐈𝐒𝐓𝐑𝐎 💀' }, type: 1 },
-    ];
+    const caption = `
+╭━━━〔 ⚠️ 𝐀𝐕𝐈𝐒𝐎 ⚠️ 〕━━⬣
+Ya estás registrado en el sistema.
 
-    return await conn.sendMessage(m.chat, {
-      image: { url: pp },
-      caption: `╭━━━〔 ⚠️ 𝐀𝐕𝐈𝐒𝐎 ⚠️ 〕━━⬣
-  Ya estás registrado en el sistema.
-  
-  Si deseas reiniciar tu registro,
-  usa el comando:
-  ➤ *${usedPrefix}unreg*
-  
-  ✧ No es necesario volver a registrarte.
-╰━━━━━━━━━━━━━━━━━━⬣`,
+Si deseas reiniciar tu registro, usa:
+> *${usedPrefix}unreg*
+
+✧ No es necesario volver a registrarte.
+╰━━━━━━━━━━━━━━━━━━⬣`
+
+    const productMessage = {
+      product: {
+        productImage: { url: pp },
+        productId: '8888888888888',
+        title: '🕷️ Registro Existente',
+        description: caption,
+        currencyCode: 'USD',
+        priceAmount1000: '100000',
+        retailerId: 2001,
+        url: `https://wa.me/${who.split('@')[0]}`,
+        productImageCount: 1
+      },
+      businessOwnerJid: who,
       footer: "👁️ KanekiBot-V3 ┊ Sistema de Identificación",
-      buttons: botones,
-      headerType: 4
-    }, { quoted: fkontak });
+      mentions: [m.sender]
+    }
+
+    return await conn.sendMessage(m.chat, productMessage, { quoted: fkontak })
   }
 
+  // ⚙️ Si formato incorrecto
   if (!Reg.test(text)) {
-    const botones = [
-      { buttonId: `${usedPrefix}reg ${name2}.18`, buttonText: { displayText: '🩸 𝐀𝐔𝐓𝐎 𝐑𝐄𝐆𝐈𝐒𝐓𝐑𝐀𝐑 🩸' }, type: 1 },
-    ];
+    const caption = `
+╭─〔 ⛔ 𝐄𝐑𝐑𝐎𝐑 𝐃𝐄 𝐅𝐎𝐑𝐌𝐀𝐓𝐎 ⛔ 〕
+Usa el comando correctamente:
 
-    return await conn.sendMessage(m.chat, {
-      image: { url: 'https://i.pinimg.com/originals/b3/67/d5/b367d513d861de468305c32c6cd22756.jpg' },
-      caption: `╭─〔 ⛔ 𝐄𝐑𝐑𝐎𝐑 𝐃𝐄 𝐅𝐎𝐑𝐌𝐀𝐓𝐎 ⛔ 〕
- Usa el comando de esta forma:
+📥 *${usedPrefix + command} nombre.edad*
 
- 📥 *${usedPrefix + command} nombre.edad*
+Ejemplo:
+> *${usedPrefix + command} ${name2}.18*
 
- Ejemplo:
- ➤ *${usedPrefix + command} ${name2}.18*
+💡 Consejo: Escribe tu nombre seguido de un punto y tu edad.
+╰──────────────────────────⬣`
 
- 💡 Si no quieres escribirlo,
- puedes presionar el botón de abajo.
-╰──────────────────────────⬣`,
+    const productMessage = {
+      product: {
+        productImage: { url: 'https://i.pinimg.com/originals/b3/67/d5/b367d513d861de468305c32c6cd22756.jpg' },
+        productId: '9999999999999',
+        title: '❌ Error de Formato',
+        description: caption,
+        currencyCode: 'USD',
+        priceAmount1000: '100000',
+        retailerId: 2002,
+        url: 'https://github.com/Yuji-XDev',
+        productImageCount: 1
+      },
+      businessOwnerJid: who,
       footer: "⚡ KanekiBot-V3 ┊ Verificador de Usuario",
-      buttons: botones,
-      headerType: 4
-    }, { quoted: fkontak });
+      mentions: [m.sender]
+    }
+
+    return await conn.sendMessage(m.chat, productMessage, { quoted: fkontak })
   }
 
+  // ✅ Registro correcto
   let [_, name, splitter, age] = text.match(Reg)
   if (!name) return m.reply("❌ El nombre no puede estar vacío.")
   if (!age) return m.reply("❌ La edad no puede estar vacía.")
@@ -76,54 +117,75 @@ let handler = async function (m, { conn, text, usedPrefix, command }) {
 
   user.name = `${name} ✓`
   user.age = age
-  user.regTime = + new Date      
+  user.regTime = +new Date()
   user.registered = true
 
-  let hora = new Date().toLocaleTimeString('es-PE', { timeZone: 'America/Lima' });
-  let fechaObj = new Date();
-  let fecha = fechaObj.toLocaleDateString('es-PE', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'America/Lima' });
-  let dia = fechaObj.toLocaleDateString('es-PE', { weekday: 'long', timeZone: 'America/Lima' });
+  const hora = new Date().toLocaleTimeString('es-PE', { timeZone: 'America/Lima' })
+  const fechaObj = new Date()
+  const fecha = fechaObj.toLocaleDateString('es-PE', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'America/Lima' })
+  const dia = fechaObj.toLocaleDateString('es-PE', { weekday: 'long', timeZone: 'America/Lima' })
+  const sn = createHash('md5').update(m.sender).digest('hex').slice(0, 20)
 
-  let sn = createHash('md5').update(m.sender).digest('hex').slice(0, 20)
+  const texto1 = `
+ ׄ 🎋 ׅ 𝙍𝙀𝙂𝙄𝙎𝙏𝙍𝙊 𝙀𝙓𝙄𝙏𝙊𝙎𝙊 🍃
 
-  let regbot = `
- 〔 ✅ 𝐑𝐄𝐆𝐈𝐒𝐓𝐑𝐎 𝐂𝐎𝐌𝐏𝐋𝐄𝐓𝐎 ✅ 〕
- 🌾 𝐍𝐨𝐦𝐛𝐫𝐞: ${name}
- 🧩 𝐔𝐬𝐮𝐚𝐫𝐢𝐨: ${name2}
- 🌿 𝐍𝐮𝐦𝐞𝐫𝐨: ${PhoneNumber('+' + who.replace('@s.whatsapp.net', '')).getNumber('international')}
- 🧢 𝐄𝐝𝐚𝐝: ${age} años
- 💊 𝐁𝐢𝐨: ${bio}
- 📆 𝐅𝐞𝐜𝐡𝐚: ${fecha}
- 🧬 𝐇𝐨𝐫𝐚: ${hora}
- 🌙 𝐃𝐢𝐚: ${dia}
- 🔥 𝐈𝐃: ${sn}
+🌾 *Nombre:* ${name}
+🧩 *Usuario:* ${name2}
+🌿 *Número:* ${PhoneNumber('+' + who.replace('@s.whatsapp.net', '')).getNumber('international')}
+🧢 *Edad:* ${age} años
+💊 *Bio:* ${bio}
+📆 *Fecha:* ${fecha}
+🧬 *Hora:* ${hora}
+🌙 *Día:* ${dia}
+🔥 *ID:* ${sn}`
 
-
-🩸 *Bienvenido(a) al sistema, ${name2}*
-> Tu registro ha sido procesado exitosamente por *KanekiBot-V3* 🕷️
+  const texto2 = `
+🩸 *Bienvenido(a) al sistema, ${name2}!*
+> Tu registro ha sido completado exitosamente por *${botname}* 🕷️
+──────────────────────────⬣
 `
 
   await m.react?.('🩸')
-  await conn.sendMessage(m.chat, {
-    image: { url: pp },
-    caption: regbot,
-    footer: "☯︎ KanekiBot-V3 ┊ Registro Finalizado",
+
+  const productMessage = {
+    product: {
+      productImage: { url: pp },
+      productId: '54873929100',
+      title: `🍃 𝚁𝙴𝙶𝙸𝚂𝚃𝚁𝙾 - ${botname} ⚡`,
+      description: `${texto1}\n──────────────────────\n${texto2}`,
+      currencyCode: 'USD',
+      priceAmount1000: '100000',
+      retailerId: 2025,
+      productImageCount: 1,
+    },
+    footer: `2025 ${botname}`,
+    headerType: 1,
+    viewOnce: true,
+    document: fs.readFileSync('./package.json'),
+    fileName: `「 🍟 𝐊𝐀𝐍𝐄𝐊𝐈 ⚡ 」`,
+    mimetype: 'application/vnd.ms-excel',
+    fileLength: 99999999,
+    businessOwnerJid: m.sender,
+    caption: '✨ Registro completado exitosamente.',
     contextInfo: {
-      mentionedJid: [m.sender],
+      forwardingScore: 999,
+      isForwarded: true,
       externalAdReply: {
-        title: '︩︪•°ֺ໋۪݊💫 🅁🄴🄶🄸🅂🅃🅁🄾 • 🄲🄾🄼🄿🄻🄴🅃🄾°໋•︪︩',
-        body: '꒰🍃꒱ 𝐊𝐚𝐧𝐞𝐤𝐢𝐁𝐨𝐭-𝐕𝟑 ☃️`',
-        thumbnailUrl: 'https://i.pinimg.com/originals/6f/d3/ea/6fd3ea4a79c2d9e1c38d4c4a38e73a6a.jpg',
-        sourceUrl: "https://github.com/Yuji-XDev",
+        title: '🍁 Registro Kaneki AI',
+        body: 'Completa tu registro ahora mismo 💫',
+        thumbnailUrl: 'https://i.postimg.cc/Z5VtjKrz/kaneki-ai.jpg',
+        sourceUrl: 'https://wa.me/0',
         mediaType: 1,
-        renderLargerThumbnail: true
-      }
-    }
-  }, { quoted: fkontak })
+        renderLargerThumbnail: true,
+      },
+    },
+  }
+
+  await conn.sendMessage(m.chat, productMessage, { quoted: fkontak })
 }
 
 handler.help = ['reg']
 handler.tags = ['rg']
-handler.command = ['verify', 'verificar', 'reg', 'register', 'registrar'] 
+handler.command = ['verify', 'verificar', 'reg', 'register', 'registrar']
 
 export default handler
