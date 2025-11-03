@@ -3,28 +3,17 @@ import fs from 'fs'
 let handler = async (m, { conn, command }) => {
 try {
   
-// Enviar primero el video del TikTok
-await conn.sendMessage(m.chat, {
-  video: { url: 'https://vt.tiktok.com/ZSyMm8YQ6/' },
-  caption: '👁️‍🗨️ *KANΕKI MODE ACTIVATED...* 🍷'
-}, { quoted: m })
-
 let text = `
 ╭━━━〔 🍷 𝐌𝐄𝐍𝐔 𝐊𝐀𝐍𝐄𝐊𝐈 𝐕𝟏𝟖 🍷 〕━━⬣
 │
-│ 🩸 *» 𝘽𝙊𝙏:* ʀɪɴ ɪᴛᴏꜱʜɪ
+│ 🩸 *» 𝘽𝙊𝙏:* ${botname}
 │ 👁 *» 𝙀𝙎𝙏𝘼𝘿𝙊:* 𝙀𝙉 𝙊𝙋𝙀𝙍𝘼𝘾𝙄𝙊́𝙉
-│ ⚙️ *» 𝙑𝙀𝙍𝙎𝙄𝙊́𝙉:* 18.0
+│ ⚙️ *» 𝙑𝙀𝙍𝙎𝙄𝙊́𝙉:* ${vs}
 │ 🕶 *» 𝙏𝙀𝙈𝘼:* 𝐊𝐀𝐍𝐄𝐊𝐈 𝐌𝐎𝐃𝐄
 │
 ╰━━━〔 🔥 𝐒𝐘𝐒𝐓𝐄𝐌 𝐑𝐔𝐍𝐍𝐈𝐍𝐆 🔥 〕━━⬣
 
-╭━━━〔 💀 𝙈𝙀𝙉𝙐 𝘿𝙀 𝙊𝙋𝘾𝙄𝙊𝙉𝙀𝙎 💀 〕━━⬣
-│ 🍒 𝗣𝗟𝗔𝗬 - Buscar música
-│ 🩶 𝗬𝗧 - Descargar video
-│ 💬 𝗔𝗜 - Chat inteligente
-│ ⚡ 𝗦𝗣𝗘𝗘𝗗 - Medir latencia
-╰━━⬣
+no ay xd
 `
 
 await conn.sendMessage(m.chat, { 
@@ -50,7 +39,6 @@ await conn.sendMessage(m.chat, {
       sourceUrl: 'https://vt.tiktok.com/ZSyMm8YQ6/',
       mediaType: 1,
       renderLargerThumbnail: true,
-      // 🔥 Nuevo botón tipo URL (como en Spotify)
       buttons: [
         {
           "name": "cta_url",
@@ -62,9 +50,8 @@ await conn.sendMessage(m.chat, {
       ]
     }
   }
-}, { quoted: m })
+}, { quoted: fkontak })
 
-// Reacción final
 m.react('🍒')
 
 } catch (e) {
@@ -73,5 +60,5 @@ m.reply('⚠️ Error al enviar el menú Kaneki 18.')
 }
 }
 
-handler.command = /^(menu18|kaneki18|kanekimenu)$/i
+handler.command = ['menu18']
 export default handler
